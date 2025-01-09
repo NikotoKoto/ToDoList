@@ -1,20 +1,20 @@
 import styled from "styled-components";
 import TodoItem from "./TodoItem";
 import {EditTodo} from "./EditTodo";
+import { useContext } from "react";
+import { todoStateContext } from "../context/todoContext";
 
-export default function ToDoList({ todoList, deleteTodo, validateTodo,editTodo, saveTodo }) {
-  return todoList.length ? (
+export default function ToDoList() {
+  const state = useContext(todoStateContext)
+  return state.todoList.length ? (
     <TodoListStyled>
-      {todoList.map((todo) =>
+      {state.todoList.map((todo) =>
         todo.edit ? (
-          <EditTodo key={todo.id} todo={todo} cancelTodo = {()=> editTodo(todo.id)} saveTodo={(content)=> saveTodo(todo.id, content)}/>
+          <EditTodo key={todo.id} todo={todo}  />
         ) : (
           <TodoItem
             key={todo.id}
             todo={todo}
-            validateTodo={() => validateTodo(todo.id)}
-            deleteTodo={() => deleteTodo(todo.id)}
-            editTodo={()=> editTodo(todo.id) }
             
           />
         )

@@ -1,24 +1,33 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import Button from "./reusable-UI/Button";
+import { todoDispatcherContext } from "../context/todoContext";
 
-export default function AddTodo({ addTodo }) {
+
+
+export default function AddTodo() {
   const [value, setValue] = useState("");
-
+  const dispatch = useContext(todoDispatcherContext)
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setValue(inputValue);
   };
   const handleClick = () => {
     if (value.length) {
-      addTodo(value);
+      dispatch({
+        type: 'ADD_TODO',
+        content : value,
+      })
       setValue("");
     }
   };
 
   const handleKeyDown = (e) => {
 if(e.code === 'Enter' && value.length){
-    addTodo(value);
+  dispatch({
+    type: 'ADD_TODO',
+    content : value,
+  })
     setValue("");
 }
   }

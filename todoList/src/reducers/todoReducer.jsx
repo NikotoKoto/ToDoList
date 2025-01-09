@@ -40,6 +40,12 @@ export default function todoReducer(state, action){
                 todoList: state.todoList.map((todo) => todo.id === action.id ? {...todo, content : action.content, edit: false} : todo )
             }
         }
+        case 'CANCEL_TODO' :{
+            return {
+                ...state,
+                todoList: state.todoList.map((todo) => todo.id === action.id ? {...todo, edit : false} : todo )
+            }
+        }
         default : {
             throw new Error('action inconnu');
         }
