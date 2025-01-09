@@ -3,7 +3,8 @@ import AddToDo from "./components/AddTodo";
 import ToDoList from "./components/TodoList";
 import { useReducer } from "react";
 import todoReducer from "./reducers/todoReducer";
-
+import { todoStateContext } from "./context/todoContext";
+import { todoDispatcherContext } from "./context/todoContext";
 function App() {
 
   const [state, dispatch] = useReducer(todoReducer, {
@@ -51,6 +52,8 @@ function App() {
   
 
   return (
+    <todoStateContext.Provider value= {state}>
+      <todoDispatcherContext.Provider value={dispatch}>
     <AppStyled>
       <h1 className="title">Build a new TodoList</h1>
       <div className="card">
@@ -66,6 +69,8 @@ function App() {
         />
       </div>
     </AppStyled>
+    </todoDispatcherContext.Provider>
+    </todoStateContext.Provider>
   );
 }
 
