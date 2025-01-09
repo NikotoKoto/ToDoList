@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import Button from "./reusable-UI/Button";
 
 export default function AddTodo({ addTodo }) {
   const [value, setValue] = useState("");
@@ -31,9 +32,8 @@ if(e.code === 'Enter' && value.length){
         placeholder="What do you want to do today?"
         className="inputTodo"
       ></input>
-      <button className="btn-primary" onClick={handleClick}>
-        Ajouter
-      </button>
+      <Button text="Ajouter" onClick={handleClick}/>
+
     </AddTodoSTyled>
   );
 }
@@ -55,22 +55,4 @@ const AddTodoSTyled = styled.div`
     }
   }
 
-  .btn-primary {
-    padding: 15px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background: #592cac;
-    color: white;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-
-    &:active {
-      transform: scale(0.9);
-    }
-
-    &:hover {
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  }
 `;
