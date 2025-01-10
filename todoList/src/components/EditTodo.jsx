@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import Button from "./reusable-UI/Button";
+import {
+  todoDispatcherContext,
+  todoStateContext,
+} from "../context/todoContext";
 
-export const EditTodo = ({todo,saveTodo, cancelTodo}) => {
-
+export const EditTodo = ({ todo}) => {
+  const dispatch = useContext(todoDispatcherContext);
   const [value, setValue] = useState(todo.content);
 
   const handleChange = (e) => {
@@ -12,17 +16,25 @@ export const EditTodo = ({todo,saveTodo, cancelTodo}) => {
   };
   const handleClick = () => {
     if (value.length) {
-      saveTodo(value);
+      dispatch({
+        type: "SAVE_TODO",
+        id: todo.id,
+        content: value,
+      });
       setValue("");
     }
   };
 
   const handleKeyDown = (e) => {
-if(e.code === 'Enter' && value.length){
-    saveTodo(value);
-    setValue("");
-}
-  }
+    if (e.code === "Enter" && value.length) {
+      dispatch({
+        type: "SAVE_TODO",
+        id: todo.id,
+        content: value,
+      });
+      setValue("");
+    }
+  };
   return (
     <EditTodoStyled>
       <input
@@ -33,17 +45,26 @@ if(e.code === 'Enter' && value.length){
         placeholder="What do you want to do today?"
         className="inputTodoEdit"
       ></input>
-      <Button onClick={handleClick} text="Sauvegarder"/>
-      <Button className="btn-primaryReverseEdit" text="Annuler" onClick={cancelTodo}/>
+      <Button onClick={handleClick} text="Sauvegarder" />
+      <Button
+        className="btn-primaryReverseEdit"
+        text="Annuler"
+        onClick={(e) => {
+          e.stopPropagation();dispatch({
+            type: 'CANCEL_TODO',
+            id: todo.id,
+            edit: false
+           })}} 
+        
+      />
     </EditTodoStyled>
   );
-}
+};
 const EditTodoStyled = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
-
 
   .inputTodoEdit {
     padding: 15px;
@@ -52,13 +73,11 @@ const EditTodoStyled = styled.div`
     input {
       outline: none;
       border: 0;
-      width: 100%
-      
+      width: 100%;
     }
   }
 
-
-  .btn-primaryReverseEdit{
+  .btn-primaryReverseEdit {
     padding: 15px;
     text-transform: uppercase;
     cursor: pointer;

@@ -3,7 +3,8 @@ import AddToDo from "./components/AddTodo";
 import ToDoList from "./components/TodoList";
 import { useReducer } from "react";
 import todoReducer from "./reducers/todoReducer";
-
+import { todoStateContext } from "./context/todoContext";
+import { todoDispatcherContext } from "./context/todoContext";
 function App() {
 
   const [state, dispatch] = useReducer(todoReducer, {
@@ -12,60 +13,23 @@ function App() {
 
 
 
-  const addTodo = (content) => {
-    dispatch({
-      type: 'ADD_TODO',
-      content,
-    })
-  };
-
-  const deleteTodo = (id) => {
-   dispatch({
-    type: 'DELETE_TODO',
-    id
-   })
-  };
-  const validateTodo = (id) => {
-   dispatch({
-    type: 'VALIDATE_TODO',
-    id
-   })
-  };
-
-  const editTodo = (id) => {
-    dispatch({
-      type: 'EDIT_TODO',
-      id
-     })
-  };
-
-  const saveTodo = (id, content) => {
-    dispatch({
-      type: 'SAVE_TODO',
-      id,
-      content
-     })
-  };
-
-
   
 
   return (
+    <todoStateContext.Provider value= {state}>
+      <todoDispatcherContext.Provider value={dispatch}>
     <AppStyled>
       <h1 className="title">Build a new TodoList</h1>
       <div className="card">
-        <AddToDo addTodo={addTodo} />
+        <AddToDo />
       </div>
       <div className="card-todoList">
         <ToDoList
-          todoList={state.todoList}
-          deleteTodo={deleteTodo}
-          validateTodo={validateTodo}
-          editTodo={editTodo}
-          saveTodo={saveTodo}
-        />
+                  />
       </div>
     </AppStyled>
+    </todoDispatcherContext.Provider>
+    </todoStateContext.Provider>
   );
 }
 

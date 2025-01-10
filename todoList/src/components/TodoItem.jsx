@@ -3,21 +3,41 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { MdEditSquare } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { IoIosCheckboxOutline } from "react-icons/io";
+import { useContext } from "react";
+import { todoDispatcherContext } from "../context/todoContext";
 
-export default function TodoItem({ todo, deleteTodo, validateTodo, editTodo, }) {
 
+
+export default function TodoItem({ todo }) {
+
+  const dispatch = useContext(todoDispatcherContext);
   return (
     <TodoItemStyled>
       <span>{todo.content}</span>
-      <div className="checkBoxContainer" onClick={validateTodo}>
+      <div className="checkBoxContainer" onClick={(e) => {
+          e.stopPropagation();dispatch({
+   type: 'VALIDATE_TODO',
+   id : todo.id
+  })}}>
         {todo.done ? (
           <IoIosCheckboxOutline className="checked-icon" />
         ) : (
           <MdCheckBoxOutlineBlank className="checked-icon" />
         )}
       </div>
-      <MdEditSquare className="edit-icon" onClick={editTodo} />
-      <FaRegTrashAlt className="trash-icon" onClick={deleteTodo} />
+      <MdEditSquare className="edit-icon" onClick={(e) => {
+          e.stopPropagation();dispatch({
+  type: 'EDIT_TODO',
+  id: todo.id
+ })}} />
+      <FaRegTrashAlt
+        className="trash-icon"
+        onClick={(e) => {
+          e.stopPropagation();dispatch({
+          type: "DELETE_TODO",
+          id: todo.id,
+        })}}
+      />
     </TodoItemStyled>
   );
 }
@@ -60,6 +80,4 @@ const TodoItemStyled = styled.li`
       color: white;
     }
   }
-
- 
 `;
