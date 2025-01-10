@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import Button from "./reusable-UI/Button";
 
 export const EditTodo = ({todo,saveTodo, cancelTodo}) => {
 
@@ -32,12 +33,8 @@ if(e.code === 'Enter' && value.length){
         placeholder="What do you want to do today?"
         className="inputTodoEdit"
       ></input>
-      <button className="btn-primaryEdit" onClick={handleClick}>
-        Sauvegarder
-      </button>
-      <button className="btn-primaryReverseEdit" onClick={cancelTodo}>
-        Annuler
-      </button>
+      <Button onClick={handleClick} text="Sauvegarder"/>
+      <Button className="btn-primaryReverseEdit" text="Annuler" onClick={cancelTodo}/>
     </EditTodoStyled>
   );
 }
@@ -60,24 +57,6 @@ const EditTodoStyled = styled.div`
     }
   }
 
-  .btn-primaryEdit {
-    padding: 15px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background: #592cac;
-    color: white;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-
-    &:active {
-      transform: scale(0.9);
-    }
-
-    &:hover {
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  }
 
   .btn-primaryReverseEdit{
     padding: 15px;
