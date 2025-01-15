@@ -1,45 +1,73 @@
 import styled from "styled-components";
 import AddToDo from "./components/AddTodo";
 import ToDoList from "./components/TodoList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
+  const [ loading,setLoading] = useState(true)
+
+  useEffect(() => {
+    let shouldCancel = false;
+    const fetchTodoList = async () => {
+      try {
+        const response = await fetch("https://restapi.fr/api/rtodo");
+        if (response.ok) {
+          const todos = await response.json();
+          if(!shouldCancel){
+            if (Array.isArray(todos)) {
+              setTodoList(todos);
+            } else {
+              setTodoList([todos]);
+            }
+          } 
+          }else
+          {
+          console.log("error");
+        }
+      } catch (e) {
+        console.log(e);
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    fetchTodoList();
+    return () => {
+      shouldCancel = true;
+    }
+  }, []);
 
   const addTodo = (todo) => {
-  
     setTodoList([...todoList, todo]);
   };
 
-  const deleteTodo = (id) => {
-    setTodoList(todoList.filter((todo) => todo.id !== id));
+  const deleteTodo = (_id) => {
+    setTodoList(todoList.filter((todo) => todo._id !== _id));
   };
-  const validateTodo = (id) => {
+  const validateTodo = (_id) => {
     setTodoList(
       todoList.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo
+        todo._id === _id ? { ...todo, done: !todo.done } : todo
       )
     );
   };
 
-  const editTodo = (id) => {
+  const editTodo = (_id) => {
     setTodoList(
       todoList.map((todo) =>
-        todo.id === id ? { ...todo, edit: !todo.edit } : todo
+        todo._id === _id ? { ...todo, edit: !todo.edit } : todo
       )
     );
   };
 
-  const saveTodo = (id, content) => {
+  const saveTodo = (_id, content) => {
     setTodoList(
       todoList.map((todo) =>
-        todo.id === id ? { ...todo, edit: false, content } : todo
+        todo._id === _id ? { ...todo, edit: false, content } : todo
       )
     );
   };
-
-
-  
 
   return (
     <AppStyled>
@@ -48,13 +76,14 @@ function App() {
         <AddToDo addTodo={addTodo} />
       </div>
       <div className="card-todoList">
-        <ToDoList
+        {loading ? <p>Chargement en cours</p> : <ToDoList
           todoList={todoList}
           deleteTodo={deleteTodo}
           validateTodo={validateTodo}
           editTodo={editTodo}
           saveTodo={saveTodo}
-        />
+        />}
+        
       </div>
     </AppStyled>
   );

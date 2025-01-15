@@ -12,9 +12,9 @@ export default function ToDoList({ todoList, deleteTodo, validateTodo,editTodo, 
           <TodoItem
             key={todo.id}
             todo={todo}
-            validateTodo={() => validateTodo(todo.id)}
-            deleteTodo={() => deleteTodo(todo.id)}
-            editTodo={()=> editTodo(todo.id) }
+            validateTodo={() => validateTodo(todo._id)}
+            deleteTodo={() => deleteTodo(todo._id)}
+            editTodo={()=> editTodo(todo._id) }
             
           />
         )

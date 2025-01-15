@@ -33,7 +33,7 @@ export default function AddTodo({ addTodo }) {
         setError("Une erreur est survenue Mec");
       }
     } catch (e) {
-      setError("Une erreur est survenue Mec");
+      setError("Une erreur est survenue Mec",e);
     } finally {
       setLoading(false);
     }
