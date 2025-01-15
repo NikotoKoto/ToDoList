@@ -6,14 +6,8 @@ import { useState } from "react";
 function App() {
   const [todoList, setTodoList] = useState([]);
 
-  const addTodo = (content) => {
-    const todo = {
-      id: crypto.randomUUID(),
-      content,
-      done: false,
-      edit: false,
-      isSelected: false,
-    };
+  const addTodo = (todo) => {
+  
     setTodoList([...todoList, todo]);
   };
 

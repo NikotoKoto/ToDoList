@@ -3,24 +3,55 @@ import styled from "styled-components";
 
 export default function AddTodo({ addTodo }) {
   const [value, setValue] = useState("");
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setValue(inputValue);
   };
-  const handleClick = () => {
+
+  const createTodo = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("https://restapi.fr/api/rtodo", {
+        method: "POST",
+        body: JSON.stringify({
+          content: value,
+          done: false,
+          edit: false,
+          isSelected: false,
+        }),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const todo = await response.json();
+        addTodo(todo);
+      } else {
+        setError("Une erreur est survenue Mec");
+      }
+    } catch (e) {
+      setError("Une erreur est survenue Mec");
+    } finally {
+      setLoading(false);
+    }
+    setValue("");
+  };
+  const handleClick =  () => {
     if (value.length) {
-      addTodo(value);
-      setValue("");
+      createTodo();
+     
     }
   };
 
   const handleKeyDown = (e) => {
-if(e.code === 'Enter' && value.length){
-    addTodo(value);
-    setValue("");
-}
-  }
+    if (e.code === "Enter" && value.length) {
+      createTodo();
+
+    }
+  };
   return (
     <AddTodoSTyled>
       <input
@@ -32,7 +63,7 @@ if(e.code === 'Enter' && value.length){
         className="inputTodo"
       ></input>
       <button className="btn-primary" onClick={handleClick}>
-        Ajouter
+        {loading ? "Chargement" : "Ajouter"}
       </button>
     </AddTodoSTyled>
   );
@@ -42,7 +73,6 @@ const AddTodoSTyled = styled.div`
   flex-direction: row;
   width: 100%;
 
-
   .inputTodo {
     padding: 15px;
     width: 100%;
@@ -50,8 +80,7 @@ const AddTodoSTyled = styled.div`
     input {
       outline: none;
       border: 0;
-      width: 100%
-      
+      width: 100%;
     }
   }
 
