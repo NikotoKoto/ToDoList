@@ -42,32 +42,25 @@ function App() {
     setTodoList([...todoList, todo]);
   };
 
-  const deleteTodo = (_id) => {
-    setTodoList(todoList.filter((todo) => todo._id !== _id));
-  };
-  const validateTodo = (_id) => {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === _id ? { ...todo, done: !todo.done } : todo
-      )
-    );
+  const deleteTodo = async(_id) => {
+    try {
+      const response = await fetch(`https://restapi.fr/api/rtodo/${todo._id}`,
+        {method : 'DELETE'}
+      );
+      if(response.ok){
+        setTodoList(todoList.filter((todo) => todo._id !== _id));
+    }
+    }catch(e){
+
+      console.log(e);
+    }
+    
   };
 
-  const editTodo = (_id) => {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === _id ? { ...todo, edit: !todo.edit } : todo
-      )
-    );
-  };
-
-  const saveTodo = (_id, content) => {
-    setTodoList(
-      todoList.map((todo) =>
-        todo._id === _id ? { ...todo, edit: false, content } : todo
-      )
-    );
-  };
+  const updateTodo = (newTodo) => {
+    setTodoList(todoList.map((todo) => todo._id === newTodo._id ? newTodo : todo))
+  }
+ 
 
   return (
     <AppStyled>
@@ -79,9 +72,7 @@ function App() {
         {loading ? <p>Chargement en cours</p> : <ToDoList
           todoList={todoList}
           deleteTodo={deleteTodo}
-          validateTodo={validateTodo}
-          editTodo={editTodo}
-          saveTodo={saveTodo}
+          updateTodo ={updateTodo}
         />}
         
       </div>

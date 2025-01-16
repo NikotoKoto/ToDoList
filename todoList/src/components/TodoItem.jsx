@@ -3,20 +3,58 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { MdEditSquare } from "react-icons/md";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { IoIosCheckboxOutline } from "react-icons/io";
+import { useState } from "react";
 
-export default function TodoItem({ todo, deleteTodo, validateTodo, editTodo, }) {
+export default function TodoItem({ todo, deleteTodo, updateTodo }) {
+ 
+  const [loading, setLoading] = useState(false);
+  const TryUpdateTodo = async (newTodo) => {
+    const  {_id, ...newTodoWithoutId} = newTodo
+    try {
+      setLoading(true);
+      const response = await fetch(`https://restapi.fr/api/rtodo/${todo._id}`, {
+        method: "PATCH",
+        body: JSON.stringify(newTodoWithoutId),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const newTodo = await response.json();
+        updateTodo(newTodo);
+      } else {
+        console.log("il ya une erreur mon ami");
+      }
+    } catch (e) {
+      console.log("il ya une erreur mon ami", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <TodoItemStyled>
       <span>{todo.content}</span>
-      <div className="checkBoxContainer" onClick={validateTodo}>
+      <div
+        className="checkBoxContainer"
+        onClick={(e) => {
+          e.stopPropagation();
+          TryUpdateTodo({ ...todo, done: !todo.done });
+        }}
+      >
         {todo.done ? (
           <IoIosCheckboxOutline className="checked-icon" />
         ) : (
           <MdCheckBoxOutlineBlank className="checked-icon" />
         )}
       </div>
-      <MdEditSquare className="edit-icon" onClick={editTodo} />
+      <MdEditSquare
+        className="edit-icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          TryUpdateTodo({ ...todo, edit: true });
+        }}
+      />
       <FaRegTrashAlt className="trash-icon" onClick={deleteTodo} />
     </TodoItemStyled>
   );
@@ -60,6 +98,4 @@ const TodoItemStyled = styled.li`
       color: white;
     }
   }
-
- 
 `;

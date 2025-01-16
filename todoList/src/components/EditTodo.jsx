@@ -1,9 +1,34 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-export const EditTodo = ({todo,saveTodo, cancelTodo}) => {
-
+export const EditTodo = ({todo,updateTodo, cancelTodo}) => {
+  const [loading, setLoading] = useState(false)
   const [value, setValue] = useState(todo.content);
+
+
+  const TryUpdateTodo = async (newTodo) => {
+    const  {_id, ...newTodoWithoutId} = newTodo
+    try {
+      setLoading(true);
+      const response = await fetch(`https://restapi.fr/api/rtodo/${todo._id}`, {
+        method: "PATCH",
+        body: JSON.stringify(newTodoWithoutId),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const newTodo = await response.json();
+        updateTodo(newTodo);
+      } else {
+        console.log("il ya une erreur mon ami");
+      }
+    } catch (e) {
+      console.log("il ya une erreur mon ami", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
@@ -11,14 +36,14 @@ export const EditTodo = ({todo,saveTodo, cancelTodo}) => {
   };
   const handleClick = () => {
     if (value.length) {
-      saveTodo(value);
+      TryUpdateTodo({...todo, content: value, edit : false})
       setValue("");
     }
   };
 
   const handleKeyDown = (e) => {
 if(e.code === 'Enter' && value.length){
-    saveTodo(value);
+  TryUpdateTodo({...todo, content: value, edit :false});
     setValue("");
 }
   }
@@ -35,7 +60,7 @@ if(e.code === 'Enter' && value.length){
       <button className="btn-primaryEdit" onClick={handleClick}>
         Sauvegarder
       </button>
-      <button className="btn-primaryReverseEdit" onClick={cancelTodo}>
+      <button className="btn-primaryReverseEdit" onClick={() => TryUpdateTodo({...todo, edit : false})}>
         Annuler
       </button>
     </EditTodoStyled>
