@@ -32,6 +32,26 @@ export default function TodoItem({ todo, deleteTodo, updateTodo }) {
     }
   };
 
+  const handleClickDeleteTodo = async() => {
+    try{
+      setLoading(true);
+      const response = await fetch (`https://restapi.fr/api/rtodo/${todo._id}`,
+        {
+          method: 'DELETE',
+        }
+      )
+      if(response.ok){
+        
+        deleteTodo(todo)
+      }
+    }catch(e){
+      console.log("il ya une erreur mon ami", e);
+    }finally{
+      setLoading(false)
+      console.log("il ya une erreur mon ami");
+    }
+  }
+
   return (
     <TodoItemStyled>
       <span>{todo.content}</span>
@@ -55,7 +75,7 @@ export default function TodoItem({ todo, deleteTodo, updateTodo }) {
           TryUpdateTodo({ ...todo, edit: true });
         }}
       />
-      <FaRegTrashAlt className="trash-icon" onClick={deleteTodo} />
+      <FaRegTrashAlt className="trash-icon" onClick={handleClickDeleteTodo} />
     </TodoItemStyled>
   );
 }

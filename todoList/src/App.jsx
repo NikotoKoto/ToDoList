@@ -42,19 +42,8 @@ function App() {
     setTodoList([...todoList, todo]);
   };
 
-  const deleteTodo = async(_id) => {
-    try {
-      const response = await fetch(`https://restapi.fr/api/rtodo/${todo._id}`,
-        {method : 'DELETE'}
-      );
-      if(response.ok){
-        setTodoList(todoList.filter((todo) => todo._id !== _id));
-    }
-    }catch(e){
-
-      console.log(e);
-    }
-    
+  const deleteTodo = (deletedTodo) => {
+   setTodoList(todoList.filter((todo) => todo._id !== deletedTodo._id))
   };
 
   const updateTodo = (newTodo) => {

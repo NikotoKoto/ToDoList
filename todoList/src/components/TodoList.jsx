@@ -13,7 +13,7 @@ export default function ToDoList({ todoList, deleteTodo, updateTodo }) {
             key={todo.id}
             todo={todo}
             updateTodo={updateTodo}
-            deleteTodo={()=> deleteTodo(todo.id)}
+            deleteTodo={ deleteTodo}
             
           />
         )
