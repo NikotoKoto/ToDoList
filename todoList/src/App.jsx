@@ -1,11 +1,46 @@
 import styled from "styled-components";
 import AddToDo from "./components/AddTodo";
 import ToDoList from "./components/TodoList";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
+
+const todoReducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_TODO": {
+      return {
+        ...state,
+        todoList: action.todoList,
+      };
+    }
+
+    case "ADD_TODO": {
+      return {
+        ...state,
+        todoList: [...state.todoList, action.todo],
+      };
+    }
+    case "UPDATE_TODO": {
+      return {
+        ...state,
+        todoList: state.todoList.map((todo) =>
+          todo._id === action.todo._id ? action.todo : todo
+        ),
+      };
+    }
+    case "DELETE_TODO": {
+      return {
+        ...state,
+        todoList: state.todoList.filter((todo) => todo._id !== action.todo._id),
+      };
+    }
+    default: {
+      throw new Error("Action inconnu ");
+    }
+  }
+};
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
-  const [ loading,setLoading] = useState(true)
+  const [state, dispatch] = useReducer(todoReducer, { todoList: [] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let shouldCancel = false;
@@ -14,20 +49,19 @@ function App() {
         const response = await fetch("https://restapi.fr/api/rtodo");
         if (response.ok) {
           const todos = await response.json();
-          if(!shouldCancel){
+          if (!shouldCancel) {
             if (Array.isArray(todos)) {
-              setTodoList(todos);
+              dispatch({ type: "FETCH_TODO", todoList: todos });
             } else {
-              setTodoList([todos]);
+              dispatch({ type: "FETCH_TODO", todoList: [todos] });
             }
-          } 
-          }else
-          {
+          }
+        } else {
           console.log("error");
         }
       } catch (e) {
         console.log(e);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -35,21 +69,20 @@ function App() {
     fetchTodoList();
     return () => {
       shouldCancel = true;
-    }
+    };
   }, []);
 
-  const addTodo = (todo) => {
-    setTodoList([...todoList, todo]);
+  const addTodo = (newTodo) => {
+    dispatch({ type: "ADD_TODO", todo: newTodo });
   };
 
   const deleteTodo = (deletedTodo) => {
-   setTodoList(todoList.filter((todo) => todo._id !== deletedTodo._id))
+    dispatch({ type: "DELETE_TODO", todo: deletedTodo });
   };
 
-  const updateTodo = (newTodo) => {
-    setTodoList(todoList.map((todo) => todo._id === newTodo._id ? newTodo : todo))
-  }
- 
+  const updateTodo = (updateTodo) => {
+    dispatch({ type: "UPDATE_TODO", todo: updateTodo });
+  };
 
   return (
     <AppStyled>
@@ -58,12 +91,15 @@ function App() {
         <AddToDo addTodo={addTodo} />
       </div>
       <div className="card-todoList">
-        {loading ? <p>Chargement en cours</p> : <ToDoList
-          todoList={todoList}
-          deleteTodo={deleteTodo}
-          updateTodo ={updateTodo}
-        />}
-        
+        {loading ? (
+          <p>Chargement en cours</p>
+        ) : (
+          <ToDoList
+            todoList={state.todoList}
+            deleteTodo={deleteTodo}
+            updateTodo={updateTodo}
+          />
+        )}
       </div>
     </AppStyled>
   );
